@@ -89,3 +89,12 @@ func ReplaceLetters(in string) string {
 func TrimmingFiller(in string) string {
 	return strings.Trim(in, "<")
 }
+
+func CheckSame[S ~[]E, E comparable](s S) bool {
+	for _, v := range s {
+		if v != s[0] {
+			return false
+		}
+	}
+	return true
+}

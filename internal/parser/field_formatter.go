@@ -81,10 +81,13 @@ func (f *FieldFormatter) field(fieldType int, from string, startIdx, length int,
 		value:      fmtVal,
 		rawValue:   rawValue,
 		checkDigit: checkDigit,
-		isValid:    false,
+		isValid:    true,
 	}
 
-	field.isValid = field.isValueValid()
+	if checkDigitFollow {
+		field.isValid = field.isValueValid()
+	}
+
 	return field, nil
 
 }

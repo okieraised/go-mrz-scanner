@@ -51,7 +51,7 @@ func (td2 *TD2) Parse(in []string) (*ParserResult, error) {
 	}
 	parsedResult[constants.CountryCode] = countryCode
 
-	name, err := formatter.field(namesField, firstLine, 5, 39, false)
+	name, err := formatter.field(namesField, firstLine, 5, 31, false)
 	if err != nil {
 		return result, err
 	}
@@ -88,31 +88,32 @@ func (td2 *TD2) Parse(in []string) (*ParserResult, error) {
 	}
 	parsedResult[constants.ExpiryDate] = expiryDate
 
-	var personalNumber *mrzField = nil
+	var optionalData *mrzField = nil
 	var finalCheckDigit *mrzField = nil
 
 	if isVisaDocument {
-		personalNumber, err = formatter.field(personalNumberField, secondLine, 28, 16, false)
+		optionalData, err = formatter.field(personalNumberField, secondLine, 28, 8, false)
 		if err != nil {
 			return result, err
 		}
-		parsedResult[constants.OptionalData1] = personalNumber
+		parsedResult[constants.OptionalData1] = optionalData
+
 		parsedResult[constants.FinalCheckDigit] = nil
 	} else {
-		personalNumber, err = formatter.field(personalNumberField, secondLine, 28, 14, true)
+		optionalData, err = formatter.field(personalNumberField, secondLine, 28, 7, true)
 		if err != nil {
 			return result, err
 		}
-		parsedResult[constants.OptionalData1] = personalNumber
+		parsedResult[constants.OptionalData1] = optionalData
 
-		finalCheckDigit, err = formatter.field(hashField, secondLine, 28, 14, false)
+		finalCheckDigit, err = formatter.field(hashField, secondLine, 35, 1, false)
 		if err != nil {
 			return result, err
 		}
 		parsedResult[constants.FinalCheckDigit] = finalCheckDigit
 	}
 
-	isValid, err := td2.validateAllCheckDigits(documentNumber, birthdate, expiryDate, personalNumber, finalCheckDigit)
+	isValid, err := td2.validateAllCheckDigits(documentNumber, birthdate, expiryDate, optionalData, finalCheckDigit)
 	if err != nil {
 		return result, err
 	}
@@ -125,22 +126,23 @@ func (td2 *TD2) Parse(in []string) (*ParserResult, error) {
 
 func (td2 *TD2) validateAllCheckDigits(documentNumber, birthdate, expiryDate, optionalData, finalCheckDigit *mrzField) (bool, error) {
 
-	if optionalData != nil {
+	if finalCheckDigit != nil {
 		compositeStr := strings.Join([]string{
 			documentNumber.rawValue, documentNumber.checkDigit,
-			optionalData.rawValue, optionalData.checkDigit,
 			birthdate.rawValue, birthdate.checkDigit,
 			expiryDate.rawValue, expiryDate.checkDigit,
+			optionalData.rawValue,
 		}, "")
 
 		calculatedCheckDigit, err := utils.CalculateCheckDigits(compositeStr)
 		if err != nil {
 			return false, err
 		}
+
 		return documentNumber.isValid &&
 			birthdate.isValid &&
 			expiryDate.isValid &&
-			(calculatedCheckDigit == finalCheckDigit.checkDigit), nil
+			(calculatedCheckDigit == finalCheckDigit.rawValue), nil
 	} else {
 		return documentNumber.isValid && birthdate.isValid && expiryDate.isValid, nil
 	}

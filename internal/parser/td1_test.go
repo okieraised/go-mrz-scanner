@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"fmt"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -16,5 +15,5 @@ func TestTD1_Parse(t *testing.T) {
 	})
 
 	assert.NoError(t, err)
-	fmt.Println(mapper)
+	assert.Equal(t, true, mapper.IsValid)
 }
