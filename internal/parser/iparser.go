@@ -1,6 +1,7 @@
 package parser
 
 type ParserResult struct {
+	IsVISA  bool
 	IsValid bool
 	Mapper  map[string]*mrzField
 }

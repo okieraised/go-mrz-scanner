@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"fmt"
 	"github.com/okieraised/go-mrz-scanner/constants"
 	"github.com/okieraised/go-mrz-scanner/mrz_errors"
 	"github.com/okieraised/go-mrz-scanner/utils"
@@ -9,18 +8,17 @@ import (
 )
 
 type TD1 struct {
-	lineLength int
 }
 
 func NewTD1() IMRZParser {
-	return &TD1{
-		lineLength: 30,
-	}
+	return &TD1{}
 }
 
 func (td1 *TD1) Parse(in []string) (*ParserResult, error) {
 
-	result := &ParserResult{}
+	result := &ParserResult{
+		IsVISA: false,
+	}
 	parsedResult := make(map[string]*mrzField)
 
 	if len(in) != 3 {
@@ -28,7 +26,7 @@ func (td1 *TD1) Parse(in []string) (*ParserResult, error) {
 	}
 
 	for _, line := range in {
-		if len(line) != 30 {
+		if len(line) != constants.Type1NumberOfCharacter {
 			return result, mrz_errors.ErrTD1InvalidLineLength
 		}
 	}
@@ -109,11 +107,6 @@ func (td1 *TD1) Parse(in []string) (*ParserResult, error) {
 		return result, err
 	}
 
-	fmt.Println(documentType, countryCode, documentNumber, optionalData1)
-	fmt.Println(birthdate, sex, expiryDate, nationality, optionalData2, finalCheckDigit)
-	fmt.Println(name)
-	fmt.Println(isValid)
-
 	result.Mapper = parsedResult
 	result.IsValid = isValid
 
@@ -133,8 +126,5 @@ func (td1 *TD1) validateAllCheckDigits(documentNumber, optionalData, birthdate, 
 	if err != nil {
 		return false, err
 	}
-	if calculatedCheckDigit != finalCheckDigit.value {
-		return false, nil
-	}
-	return true, nil
+	return documentNumber.isValid && birthdate.isValid && expiryDate.isValid && (calculatedCheckDigit == finalCheckDigit.value), nil
 }
