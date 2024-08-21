@@ -43,6 +43,8 @@ func (p *MRZParser) Parse() error {
 		mrzParser = parser.NewTD2()
 	case constants.MRZType3:
 		mrzParser = parser.NewTD3()
+	default:
+		return mrz_errors.ErrInvalidMRZType
 	}
 
 	parse, err := mrzParser.Parse(p.components)
@@ -67,10 +69,9 @@ func (p *MRZParser) validate() error {
 		}
 		mrzType = constants.MRZType1
 	case 2:
-		characterCount := make([]int, 2)
+		characterCount := make([]int, 0)
 		for _, line := range p.components {
-			if len(line) != constants.Type2NumberOfCharacter &&
-				len(line) != constants.Type3NumberOfCharacter {
+			if len(line) != constants.Type2NumberOfCharacter && len(line) != constants.Type3NumberOfCharacter {
 				return mrz_errors.ErrGenericInvalidMRZLinesLength
 			}
 			characterCount = append(characterCount, len(line))
