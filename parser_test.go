@@ -1,6 +1,7 @@
 package go_mrz_parser
 
 import (
+	"fmt"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -12,8 +13,9 @@ func TestMRZParser_Parse_TD1(t *testing.T) {
 		"ERIKSSON<<ANNA<MARIA<<<<<<<<<<",
 	})
 
-	err := parser.Parse()
+	result, err := parser.Parse()
 	assert.NoError(t, err)
+	fmt.Println(result)
 }
 
 func TestMRZParser_Parse_TD2(t *testing.T) {
@@ -22,6 +24,31 @@ func TestMRZParser_Parse_TD2(t *testing.T) {
 		"D231458907UTO7408122F1204159<<<<<<<6",
 	})
 
-	err := parser.Parse()
+	result, err := parser.Parse()
 	assert.NoError(t, err)
+	fmt.Println(result)
+}
+
+func TestMRZParser_Parse_TD3(t *testing.T) {
+	parser := NewMRZLineParser([]string{
+		"P<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<",
+		"L898902C36UTO7408122F1204159ZE184226B<<<<<10",
+	})
+
+	result, err := parser.Parse()
+	assert.NoError(t, err)
+	assert.Equal(t, false, result.IsVISA)
+	assert.Equal(t, true, result.IsValid)
+}
+
+func TestMRZParser_Parse_TD3_VISA(t *testing.T) {
+	parser := NewMRZLineParser([]string{
+		"V<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<",
+		"L8988901C4XXX4009078F96121096ZE184226B<<<<<<",
+	})
+
+	result, err := parser.Parse()
+	assert.NoError(t, err)
+	assert.Equal(t, true, result.IsVISA)
+	assert.Equal(t, true, result.IsValid)
 }

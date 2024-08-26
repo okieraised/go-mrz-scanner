@@ -1,16 +1,3 @@
-# go-mrz-scanner
-
-Utility package to validate and parse the MRZ string.
-
-## Installation
-To install this package, run:
-```shell
-go get -u github.com/okieraised/go-mrz-scanner
-```
-
-## Usage
-Below is an example to parse the MRZ components:
-```go
 package main
 
 import (
@@ -34,4 +21,3 @@ func main() {
 	}
 	fmt.Println(result)
 }
-```

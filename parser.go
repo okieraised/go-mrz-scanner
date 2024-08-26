@@ -1,7 +1,6 @@
 package go_mrz_parser
 
 import (
-	"fmt"
 	"github.com/okieraised/go-mrz-scanner/constants"
 	"github.com/okieraised/go-mrz-scanner/internal/parser"
 	"github.com/okieraised/go-mrz-scanner/mrz_errors"
@@ -22,17 +21,19 @@ func NewMRZStringParser(mrzStr string) *MRZParser {
 	}
 }
 
+// NewMRZLineParser receives the mrz string slices
 func NewMRZLineParser(mrzLines []string) *MRZParser {
 	return &MRZParser{
 		components: mrzLines,
 	}
 }
 
-func (p *MRZParser) Parse() error {
+// Parse validates and parses the MRZ information
+func (p *MRZParser) Parse() (*parser.ParserResult, error) {
 
 	err := p.validate()
 	if err != nil {
-		return err
+		return &parser.ParserResult{}, err
 	}
 
 	var mrzParser parser.IMRZParser
@@ -44,19 +45,18 @@ func (p *MRZParser) Parse() error {
 	case constants.MRZType3:
 		mrzParser = parser.NewTD3()
 	default:
-		return mrz_errors.ErrInvalidMRZType
+		return &parser.ParserResult{}, mrz_errors.ErrInvalidMRZType
 	}
 
 	parse, err := mrzParser.Parse(p.components)
 	if err != nil {
-		return err
+		return &parser.ParserResult{}, err
 	}
 
-	fmt.Println(parse)
-
-	return nil
+	return parse, nil
 }
 
+// validate checks the input MRZ for formatting errors
 func (p *MRZParser) validate() error {
 	mrzType := 0
 
