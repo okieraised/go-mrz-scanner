@@ -23,6 +23,5 @@ func main() {
 	fmt.Println(result.Fields[constants.MRZFieldGender].GetRawValue())
 
 	names := result.Fields[constants.MRZFieldName].GetValue().([]string)
-	fmt.Println(names[0])
-	fmt.Println(names[1])
+	fmt.Println(names)
 }

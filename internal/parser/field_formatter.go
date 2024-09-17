@@ -29,6 +29,12 @@ const (
 	mrzDateFmt = "060102" // YYMMDD
 )
 
+// mrzField specifies the structure for each field in the MRZ string.
+//
+//   - value: Parsed value (useful for name field)
+//   - rawValue: Raw MRZ value as string
+//   - checkDigit: Check digit (if available)
+//   - isValid: Specifies if the field value is valid
 type mrzField struct {
 	value      any
 	rawValue   string
@@ -36,6 +42,7 @@ type mrzField struct {
 	isValid    bool
 }
 
+// GetNames returns the name field as a string slice.
 func (f *mrzField) GetNames() ([]string, error) {
 	names, ok := f.value.([]string)
 	if !ok {
@@ -44,21 +51,22 @@ func (f *mrzField) GetNames() ([]string, error) {
 	return names, nil
 }
 
-// GetValue returns the value as any
+// GetValue returns the parsed value.
 func (f *mrzField) GetValue() any {
 	return f.value
 }
 
-// GetRawValue returns the field value as string
+// GetRawValue returns the field value as string.
 func (f *mrzField) GetRawValue() string {
 	return f.rawValue
 }
 
-// GetCheckDigit returns the check digit value as string
+// GetCheckDigit returns the check digit value as string.
 func (f *mrzField) GetCheckDigit() string {
 	return f.checkDigit
 }
 
+// isValueValid performs field validity check.
 func (f *mrzField) isValueValid() bool {
 	_, err := strconv.Atoi(f.checkDigit)
 	if err != nil {

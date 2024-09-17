@@ -2,6 +2,10 @@
 
 Utility package to validate and parse the MRZ string.
 
+## Common
+For more information regarding the format of the MRZ string, refer to the
+[**Machine-readable passport**](https://en.wikipedia.org/wiki/Machine-readable_passport)
+
 ## Installation
 To install this package, run:
 ```shell
@@ -35,3 +39,5 @@ func main() {
 	fmt.Println(result)
 }
 ```
+
+

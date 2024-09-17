@@ -14,9 +14,9 @@ func NewTD3() IMRZParser {
 	return &TD3{}
 }
 
-func (td3 *TD3) Parse(in []string) (*ParserResult, error) {
+func (td3 *TD3) Parse(in []string) (*MRZResult, error) {
 
-	result := &ParserResult{}
+	result := &MRZResult{}
 	parsedResult := make(map[string]*mrzField)
 
 	if len(in) != 2 {
@@ -24,7 +24,7 @@ func (td3 *TD3) Parse(in []string) (*ParserResult, error) {
 	}
 
 	for _, line := range in {
-		if len(line) != constants.Type3NumberOfCharacter {
+		if len(line) != constants.Type3NumberOfCharactersPerLine {
 			return result, mrz_errors.ErrTD3InvalidLineLength
 		}
 	}

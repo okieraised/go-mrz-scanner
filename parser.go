@@ -8,20 +8,45 @@ import (
 	"strings"
 )
 
+// MRZParser defines the structure of the parser.
+//   - mrzType: type of the MRZ string
+//   - components: parts of the MRZ string
 type MRZParser struct {
 	mrzType    int
 	components []string
 }
 
-// NewMRZStringParser receives a single mrz string with each line separated by newline character
+// NewMRZStringParser receives a single mrz string with each line separated by newline character.
 func NewMRZStringParser(mrzStr string) *MRZParser {
-	components := strings.Split(mrzStr, "\n")
+	components := make([]string, 0)
+	if strings.Contains(mrzStr, "\n") {
+		components = strings.Split(mrzStr, "\n")
+	} else {
+		if len(mrzStr) == constants.Type1TotalNumberOfCharacters {
+			components = []string{
+				mrzStr[:constants.Type1NumberOfCharactersPerLine],
+				mrzStr[constants.Type1NumberOfCharactersPerLine : 2*constants.Type1NumberOfCharactersPerLine],
+				mrzStr[2*constants.Type1NumberOfCharactersPerLine:],
+			}
+		} else if len(mrzStr) == constants.Type2TotalNumberOfCharacters {
+			components = []string{
+				mrzStr[:constants.Type2NumberOfCharactersPerLine],
+				mrzStr[constants.Type2NumberOfCharactersPerLine:],
+			}
+		} else {
+			components = []string{
+				mrzStr[:constants.Type3NumberOfCharactersPerLine],
+				mrzStr[constants.Type3NumberOfCharactersPerLine:],
+			}
+		}
+	}
+
 	return &MRZParser{
 		components: components,
 	}
 }
 
-// NewMRZLineParser receives the mrz string slices
+// NewMRZLineParser receives the mrz string slices.
 func NewMRZLineParser(mrzLines []string) *MRZParser {
 	return &MRZParser{
 		components: mrzLines,
@@ -29,11 +54,11 @@ func NewMRZLineParser(mrzLines []string) *MRZParser {
 }
 
 // Parse validates and parses the MRZ information
-func (p *MRZParser) Parse() (*parser.ParserResult, error) {
+func (p *MRZParser) Parse() (*parser.MRZResult, error) {
 
 	err := p.validate()
 	if err != nil {
-		return &parser.ParserResult{}, err
+		return &parser.MRZResult{}, err
 	}
 
 	var mrzParser parser.IMRZParser
@@ -45,12 +70,12 @@ func (p *MRZParser) Parse() (*parser.ParserResult, error) {
 	case constants.MRZType3:
 		mrzParser = parser.NewTD3()
 	default:
-		return &parser.ParserResult{}, mrz_errors.ErrInvalidMRZType
+		return &parser.MRZResult{}, mrz_errors.ErrInvalidMRZType
 	}
 
 	parse, err := mrzParser.Parse(p.components)
 	if err != nil {
-		return &parser.ParserResult{}, err
+		return &parser.MRZResult{}, err
 	}
 
 	return parse, nil
@@ -63,7 +88,7 @@ func (p *MRZParser) validate() error {
 	switch len(p.components) {
 	case 3:
 		for _, line := range p.components {
-			if len(line) != constants.Type1NumberOfCharacter {
+			if len(line) != constants.Type1NumberOfCharactersPerLine {
 				return mrz_errors.ErrTD1InvalidLineLength
 			}
 		}
@@ -71,15 +96,15 @@ func (p *MRZParser) validate() error {
 	case 2:
 		characterCount := make([]int, 0)
 		for _, line := range p.components {
-			if len(line) != constants.Type2NumberOfCharacter && len(line) != constants.Type3NumberOfCharacter {
+			if len(line) != constants.Type2NumberOfCharactersPerLine && len(line) != constants.Type3NumberOfCharactersPerLine {
 				return mrz_errors.ErrGenericInvalidMRZLinesLength
 			}
 			characterCount = append(characterCount, len(line))
 		}
-		if utils.CheckSame(characterCount) && characterCount[0] == constants.Type2NumberOfCharacter {
+		if utils.CheckSame(characterCount) && characterCount[0] == constants.Type2NumberOfCharactersPerLine {
 			mrzType = constants.MRZType2
 		}
-		if utils.CheckSame(characterCount) && characterCount[0] == constants.Type3NumberOfCharacter {
+		if utils.CheckSame(characterCount) && characterCount[0] == constants.Type3NumberOfCharactersPerLine {
 			mrzType = constants.MRZType3
 		}
 	default:

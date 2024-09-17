@@ -7,10 +7,17 @@ const (
 )
 
 const (
-	Type1NumberOfCharacter = 30
-	Type2NumberOfCharacter = 36
-	Type3NumberOfCharacter = 44
+	Type1TotalNumberOfCharacters = 3 * Type1NumberOfCharactersPerLine
+	Type2TotalNumberOfCharacters = 2 * Type2NumberOfCharactersPerLine
+	Type3TotalNumberOfCharacters = 2 * Type3NumberOfCharactersPerLine
 )
+
+const (
+	Type1NumberOfCharactersPerLine = 30
+	Type2NumberOfCharactersPerLine = 36
+	Type3NumberOfCharactersPerLine = 44
+)
+
 const (
 	MRZFieldDocumentType    = "document_type"
 	MRZFieldCountryCode     = "country_code"
