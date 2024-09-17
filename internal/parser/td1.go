@@ -38,76 +38,76 @@ func (td1 *TD1) Parse(in []string) (*ParserResult, error) {
 	if err != nil {
 		return result, err
 	}
-	parsedResult[constants.DocumentType] = documentType
+	parsedResult[constants.MRZFieldDocumentType] = documentType
 
 	countryCode, err := formatter.field(countryCodeField, firstLine, 2, 3, false)
 	if err != nil {
 		return result, err
 	}
-	parsedResult[constants.CountryCode] = countryCode
+	parsedResult[constants.MRZFieldCountryCode] = countryCode
 
 	documentNumber, err := formatter.field(documentNumberField, firstLine, 5, 9, true)
 	if err != nil {
 		return result, err
 	}
-	parsedResult[constants.DocumentNumber] = documentNumber
+	parsedResult[constants.MRZFieldDocumentNumber] = documentNumber
 
 	optionalData1, err := formatter.field(optionalDataField, firstLine, 15, 15, false)
 	if err != nil {
 		return result, err
 	}
-	parsedResult[constants.OptionalData1] = optionalData1
+	parsedResult[constants.MRZFieldOptionalData1] = optionalData1
 
 	// Parse second line
 	birthdate, err := formatter.field(birthdateField, secondLine, 0, 6, true)
 	if err != nil {
 		return result, err
 	}
-	parsedResult[constants.Birthdate] = birthdate
+	parsedResult[constants.MRZFieldBirthdate] = birthdate
 
 	sex, err := formatter.field(sexField, secondLine, 7, 1, false)
 	if err != nil {
 		return result, err
 	}
-	parsedResult[constants.Sex] = sex
+	parsedResult[constants.MRZFieldGender] = sex
 
 	expiryDate, err := formatter.field(expiryDateField, secondLine, 8, 6, true)
 	if err != nil {
 		return result, err
 	}
-	parsedResult[constants.ExpiryDate] = expiryDate
+	parsedResult[constants.MRZFieldExpiryDate] = expiryDate
 
 	nationality, err := formatter.field(nationalityField, secondLine, 15, 3, false)
 	if err != nil {
 		return result, err
 	}
-	parsedResult[constants.Nationality] = nationality
+	parsedResult[constants.MRZFieldNationality] = nationality
 
 	optionalData2, err := formatter.field(optionalDataField, secondLine, 18, 11, false)
 	if err != nil {
 		return result, err
 	}
-	parsedResult[constants.OptionalData2] = optionalData2
+	parsedResult[constants.MRZFieldOptionalData2] = optionalData2
 
 	finalCheckDigit, err := formatter.field(hashField, secondLine, 29, 1, false)
 	if err != nil {
 		return result, err
 	}
-	parsedResult[constants.FinalCheckDigit] = finalCheckDigit
+	parsedResult[constants.MRZFieldFinalCheckDigit] = finalCheckDigit
 
 	// Parse third line
 	name, err := formatter.field(namesField, thirdLine, 0, 30, false)
 	if err != nil {
 		return result, err
 	}
-	parsedResult[constants.Name] = name
+	parsedResult[constants.MRZFieldName] = name
 
 	isValid, err := td1.validateAllCheckDigits(documentNumber, optionalData1, birthdate, expiryDate, optionalData2, finalCheckDigit)
 	if err != nil {
 		return result, err
 	}
 
-	result.Mapper = parsedResult
+	result.Fields = parsedResult
 	result.IsValid = isValid
 
 	return result, nil

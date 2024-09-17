@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	go_mrz_parser "github.com/okieraised/go-mrz-scanner"
+	"github.com/okieraised/go-mrz-scanner/constants"
 	"log"
 )
 
@@ -19,5 +20,9 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(result)
+	fmt.Println(result.Fields[constants.MRZFieldGender].GetRawValue())
+
+	names := result.Fields[constants.MRZFieldName].GetValue().([]string)
+	fmt.Println(names[0])
+	fmt.Println(names[1])
 }

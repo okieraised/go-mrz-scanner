@@ -36,6 +36,29 @@ type mrzField struct {
 	isValid    bool
 }
 
+func (f *mrzField) GetNames() ([]string, error) {
+	names, ok := f.value.([]string)
+	if !ok {
+		return nil, mrz_errors.ErrNotNameField
+	}
+	return names, nil
+}
+
+// GetValue returns the value as any
+func (f *mrzField) GetValue() any {
+	return f.value
+}
+
+// GetRawValue returns the field value as string
+func (f *mrzField) GetRawValue() string {
+	return f.rawValue
+}
+
+// GetCheckDigit returns the check digit value as string
+func (f *mrzField) GetCheckDigit() string {
+	return f.checkDigit
+}
+
 func (f *mrzField) isValueValid() bool {
 	_, err := strconv.Atoi(f.checkDigit)
 	if err != nil {

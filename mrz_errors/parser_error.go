@@ -3,6 +3,9 @@ package mrz_errors
 import "errors"
 
 var (
+	ErrNotNameField = errors.New("not name field")
+)
+var (
 	ErrInvalidMRZType = errors.New("invalid mrz type")
 )
 
