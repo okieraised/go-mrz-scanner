@@ -53,6 +53,11 @@ func NewMRZLineParser(mrzLines []string) *MRZParser {
 	}
 }
 
+// Type returns the MRZ type
+func (p *MRZParser) Type() int {
+	return p.mrzType
+}
+
 // Parse validates and parses the MRZ information
 func (p *MRZParser) Parse() (*parser.MRZResult, error) {
 
