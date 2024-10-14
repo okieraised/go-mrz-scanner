@@ -54,7 +54,21 @@ func NewMRZLineParser(mrzLines []string) *MRZParser {
 }
 
 // Type returns the MRZ type
-func (p *MRZParser) Type() int {
+func (p *MRZParser) Type() (int, error) {
+	err := p.validate()
+	if err != nil {
+		return 0, err
+	}
+	return p.mrzType, nil
+}
+
+// MustType returns the MRZ type or panics if invalid type
+func (p *MRZParser) MustType() int {
+	err := p.validate()
+	if err != nil {
+		panic(err)
+	}
+
 	return p.mrzType
 }
 

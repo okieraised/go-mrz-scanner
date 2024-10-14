@@ -83,3 +83,14 @@ func TestMRZParser_Parse_TD3_VISA(t *testing.T) {
 	assert.Equal(t, true, result.IsVISA)
 	assert.Equal(t, true, result.IsValid)
 }
+
+func TestMRZParser_Type(t *testing.T) {
+	parser := NewMRZLineParser([]string{
+		"V<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<",
+		"L8988901C4XXX4009078F96121096ZE184226B<<<<<<",
+	})
+
+	mrzType := parser.MustType()
+
+	fmt.Println(mrzType)
+}
