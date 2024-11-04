@@ -68,13 +68,13 @@ func (f *mrzField) GetCheckDigit() string {
 
 // isValueValid performs field validity check.
 func (f *mrzField) isValueValid() bool {
-	_, err := strconv.Atoi(f.checkDigit)
-	if err != nil {
-		return false
-	}
-
 	if f.checkDigit == "<" {
 		if len(utils.TrimmingFiller(f.rawValue)) != 0 {
+			return false
+		}
+	} else {
+		_, err := strconv.Atoi(f.checkDigit)
+		if err != nil {
 			return false
 		}
 	}
