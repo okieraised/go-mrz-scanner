@@ -72,6 +72,7 @@ func (f *mrzField) isValueValid() bool {
 		if len(utils.TrimmingFiller(f.rawValue)) != 0 {
 			return false
 		}
+		f.checkDigit = "0"
 	} else {
 		_, err := strconv.Atoi(f.checkDigit)
 		if err != nil {

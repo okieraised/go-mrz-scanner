@@ -28,6 +28,7 @@ func IsValueValid(value, checkDigit string) bool {
 
 		total += charValue * constants.Weights[idx%3]
 	}
+
 	if strconv.Itoa(total%10) != checkDigit {
 		return false
 	} else {
