@@ -5,9 +5,10 @@ package parser
 //   - IsValid (bool): Determines if the MRZ string content is valid.
 //   - Fields (map): Map of the MRZ fields.
 type MRZResult struct {
-	IsVISA  bool
-	IsValid bool
-	Fields  map[string]*mrzField
+	IsVISA       bool
+	IsValid      bool
+	Fields       map[string]*mrzField
+	IssuingState string
 }
 
 type IMRZParser interface {

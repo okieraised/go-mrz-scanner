@@ -110,6 +110,8 @@ func (td1 *TD1) Parse(in []string) (*MRZResult, error) {
 	result.Fields = parsedResult
 	result.IsValid = isValid
 
+	result.IssuingState = constants.IssuingCountryCodes[countryCode.value.(string)]
+
 	return result, nil
 }
 

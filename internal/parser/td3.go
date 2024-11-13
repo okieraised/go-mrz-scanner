@@ -119,6 +119,7 @@ func (td3 *TD3) Parse(in []string) (*MRZResult, error) {
 
 	result.Fields = parsedResult
 	result.IsValid = isValid
+	result.IssuingState = constants.IssuingCountryCodes[countryCode.value.(string)]
 
 	return result, nil
 }
