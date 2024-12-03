@@ -158,12 +158,19 @@ func (f *FieldFormatter) text(from string) string {
 }
 
 func (f *FieldFormatter) date(from string) (string, error) {
+
 	for _, digit := range from {
+		if string(digit) == "<" {
+			continue
+		}
 		if !strings.Contains(constants.DecimalDigits, string(digit)) {
 			return "", mrz_errors.ErrInvalidBirthdateCharacter
 		}
 	}
 
+	if strings.Contains(from, "<") {
+		return from, nil
+	}
 	_, err := time.Parse(mrzDateFmt, from)
 	if err != nil {
 		return "", err
